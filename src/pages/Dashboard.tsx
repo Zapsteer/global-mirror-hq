@@ -67,7 +67,7 @@ function StatCard({
 // -- NewsCard ------------------------------------------------------------------
 
 function NewsCard({ article }: { article: NewsArticle }) {
-  const { generateCaption } = useData();
+  const { } = useData();
   const [localImage, setLocalImage] = useState<string>(article.imageUrl || '');
   const [copied, setCopied] = useState<string | null>(null);
   const [activeCaption, setActiveCaption] = useState<'instagram' | 'facebook' | 'youtube' | null>(null);
