@@ -24,6 +24,9 @@ import {
   Copy,
   Check,
 } from "lucide-react";
+
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useData } from '@/context/DataContext';
@@ -121,7 +124,7 @@ function NewsCard({ article }: { article: NewsArticle }) {
   const handleGenerateAIImage = async () => {
     setGeneratingImage(true);
     try {
-      const res = await fetch("https://global-mirror-hq.onrender.com/api/generate-image", {
+      const res = await fetch(`${API}/api/generate-image`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: article.title, category: article.category }),
@@ -146,7 +149,7 @@ function NewsCard({ article }: { article: NewsArticle }) {
     setPlatformCaption('');
 
     try {
-      const res = await fetch(`http://localhost:5000/api/caption/${platform}`, {
+      const res = await fetch(`${API}/api/caption/${platform}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -184,7 +187,6 @@ function NewsCard({ article }: { article: NewsArticle }) {
   };
 
   const handleOpenAndPost = (platform: 'instagram' | 'facebook' | 'youtube') => {
-    // Caption copy
     navigator.clipboard.writeText(platformCaption).catch(() => {
       const el = document.createElement('textarea');
       el.value = platformCaption;
@@ -194,7 +196,6 @@ function NewsCard({ article }: { article: NewsArticle }) {
       document.body.removeChild(el);
     });
 
-    // Image download
     if (localImage) {
       const a = document.createElement('a');
       a.href = localImage;
@@ -205,7 +206,6 @@ function NewsCard({ article }: { article: NewsArticle }) {
       document.body.removeChild(a);
     }
 
-    // Platform open
     const urls: Record<string, string> = {
       instagram: 'https://www.instagram.com/',
       facebook:  'https://www.facebook.com/',
@@ -234,7 +234,6 @@ function NewsCard({ article }: { article: NewsArticle }) {
           className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
         />
 
-        {/* Status badge */}
         <div className="absolute top-2 right-2">
           <span className={`text-xs px-2 py-1 rounded-full font-medium ${
             article.status === 'ready'      ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
@@ -246,7 +245,6 @@ function NewsCard({ article }: { article: NewsArticle }) {
           </span>
         </div>
 
-        {/* Bottom buttons - hover pe dikhe */}
         <div className="absolute bottom-0 left-0 right-0 flex justify-between p-2 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <button
             onClick={handleGenerateAIImage}
@@ -465,7 +463,7 @@ function Sidebar({
 
 export default function Dashboard() {
   useEffect(() => {
-    fetch("https://global-mirror-hq.onrender.com")
+    fetch(`${API}`)
       .then(res => res.text())
       .then(data => console.log("AI Backend:", data))
       .catch(err => console.log("Backend error:", err));
@@ -683,7 +681,7 @@ function SettingsPanel() {
   const [autoImage, setAutoImage]     = useState(false);
 
   const updateSettings = (newSettings: Record<string, unknown>) => {
-    fetch("https://global-mirror-hq.onrender.com/api/settings", {
+    fetch(`${API}/api/settings`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSettings),
